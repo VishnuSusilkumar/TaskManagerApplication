@@ -180,7 +180,10 @@ export const getUser: RequestHandler = async (
   }
 };
 
-export const userLoginStatus: RequestHandler = async (req, res) => {
+export const userLoginStatus: RequestHandler = async (
+  req: CustomRequest,
+  res: Response
+) => {
   const token = req.cookies.token;
 
   if (!token) {
