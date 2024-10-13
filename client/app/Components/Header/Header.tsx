@@ -1,11 +1,12 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useUserContext } from "@/context/userContext";
 import { bell } from "@/utils/Icons";
 import { useRouter } from "next/navigation";
 import { useTasks } from "@/context/taskContext";
 import { useNotifications } from "@/context/notificationContext"; // Import notification context
 import NotificationModal from "../Modal/NotificationModal";
+import Image from "next/image";
 
 function Header() {
   const { user } = useUserContext();
@@ -21,6 +22,12 @@ function Header() {
 
   return (
     <header className="px-4 my-4 w-full flex items-center justify-between bg-[#f9f9f9]">
+      {/* Render logo only when user is not logged in */}
+      {!userId && (
+        <div className="flex items-center md:hidden mr-3">
+          <Image src="/logo.png" width={28} height={28} alt="logo" />
+        </div>
+      )}
       <div className="flex flex-col md:flex-row items-start md:items-center">
         <h1 className="text-sm md:text-lg font-medium">
           {userId ? `Welcome, ${user.name}!` : "Welcome to TaskManager"}
@@ -40,7 +47,7 @@ function Header() {
         </p>
       </div>
 
-      <div className="flex items-center gap-2 md:gap-4 mr-10">
+      <div className={`flex items-center gap-2 md:gap-4 ${userId ? "mr-10" : "ml-auto"}`}>
         <button
           className="px-2 py-2 text-xs md:text-sm bg-[#3aafae] text-white rounded-[50px] hover:bg-[#00A1F1] hover:text-white transition-all duration-200 ease-in-out md:px-8 md:py-3"
           onClick={() => {

@@ -10,12 +10,12 @@ function LoginForm() {
   const togglePassword = () => setShowPassword(!showPassword);
 
   return (
-    <form className="relative m-[2rem] px-10 py-14 rounded-lg bg-white w-full max-w-[520px]">
+    <form className="relative m-[2rem] px-10 py-14 rounded-lg bg-white w-full max-w-[520px] md:max-w-[400px] sm:max-w-[300px]">
       <div className="relative z-10">
-        <h1 className="mb-2 text-center text-[1.35rem] font-medium">
+        <h1 className="mb-2 text-center text-[1.35rem] md:text-[1.25rem] sm:text-[1.15rem] font-medium">
           Login to Your Account
         </h1>
-        <p className="mb-8 px-[2rem] text-center text-[#999] text-[14px]">
+        <p className="mb-8 px-[2rem] text-center text-[#999] text-[14px] md:text-[13px] sm:text-[12px]">
           Login Now. Don't have an account?{" "}
           <a
             href="/register"
@@ -55,18 +55,19 @@ function LoginForm() {
           <button
             type="button"
             className="absolute p-1 right-4 top-[43%] text-[22px] text-[#999] opacity-45"
+            onClick={togglePassword} // Add onClick to toggle password visibility
           >
             {showPassword ? (
-              <i className="fas fa-eye-slash" onClick={togglePassword}></i>
+              <i className="fas fa-eye-slash"></i>
             ) : (
-              <i className="fas fa-eye" onClick={togglePassword}></i>
+              <i className="fas fa-eye"></i>
             )}
           </button>
         </div>
         <div className="mt-4 flex justify-end">
           <a
             href="/forgot-password"
-            className="font-bold text-[#2ECC71] text-[14px] hover:text-[#7263F3] transition-all duration-300"
+            className="font-bold text-[#2ECC71] text-[14px] md:text-[13px] sm:text-[12px] hover:text-[#7263F3] transition-all duration-300"
           >
             Forgot password?
           </a>
