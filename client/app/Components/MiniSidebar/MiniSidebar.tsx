@@ -12,7 +12,7 @@ import React from "react";
 function MiniSidebar() {
   const { user } = useUserContext();
   const pathname = usePathname();
-  const userId = user?._id; // Optional chaining to avoid errors if user is undefined
+  const userId = user?._id;
 
   const getStrokeColor = (link: string) => {
     return pathname === link ? "#3aafae" : "#71717a";
@@ -41,35 +41,31 @@ function MiniSidebar() {
     },
   ];
 
-  // Render nothing if there's no user and we're below the md breakpoint
-  if (!userId) {
-    return (
-      <div className="hidden md:flex basis-[5rem] flex-col bg-[#f9f9f9]">
-        <div className="flex items-center justify-center h-[5rem]">
-          <Image src="/logo.png" width={28} height={28} alt="logo" />
-        </div>
-      </div>
-    );
-  }
-
+  
   return (
-    <div className="hidden md:flex basis-[5rem] flex-col bg-[#f9f9f9]"> {/* Hide on small screens if no user */}
+    <div
+      className={`${
+        userId ? "flex" : "hidden md:flex"
+      } basis-[5rem] flex-col bg-[#f9f9f9]`}
+    >
       <div className="flex items-center justify-center h-[5rem]">
         <Image src="/logo.png" width={28} height={28} alt="logo" />
       </div>
 
-      <div className="mt-8 flex-1 flex flex-col items-center justify-between">
-        <ul className="flex flex-col gap-10">
-          {navItems.map((item, index) => (
-            <li key={index} className="relative group">
-              <Link href={item.link}>{item.icon}</Link>
-              <span className="u-triangle absolute top-[50%] translate-y-[-50%] left-8 text-xs pointer-events-none text-white bg-[#3aafae] px-2 py-1 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                {item.title}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
+      {userId && (
+        <div className="mt-8 flex-1 flex flex-col items-center justify-between">
+          <ul className="flex flex-col gap-10">
+            {navItems.map((item, index) => (
+              <li key={index} className="relative group">
+                <Link href={item.link}>{item.icon}</Link>
+                <span className="u-triangle absolute top-[50%] translate-y-[-50%] left-8 text-xs pointer-events-none text-white bg-[#3aafae] px-2 py-1 rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  {item.title}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
