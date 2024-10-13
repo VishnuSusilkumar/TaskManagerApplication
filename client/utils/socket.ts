@@ -1,7 +1,7 @@
 import { useUserContext } from "@/context/userContext";
 import socketIO from "socket.io-client";
 
-const EndPoint = "http://localhost:8000";
+const EndPoint = "https://taskmanager-3kcf.onrender.com";
 
 export const useSocket = () => {
   const userId = useUserContext().user._id;
