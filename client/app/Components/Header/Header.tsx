@@ -4,25 +4,23 @@ import { useUserContext } from "@/context/userContext";
 import { bell } from "@/utils/Icons";
 import { useRouter } from "next/navigation";
 import { useTasks } from "@/context/taskContext";
-import { useNotifications } from "@/context/notificationContext"; // Import notification context
+import { useNotifications } from "@/context/notificationContext";
 import NotificationModal from "../Modal/NotificationModal";
 import Image from "next/image";
 
 function Header() {
   const { user } = useUserContext();
   const { openModalForAdd, activeTasks } = useTasks();
-  const { notifications, markAsRead, markAllAsRead } = useNotifications(); // Use notifications
+  const { notifications, markAsRead, markAllAsRead } = useNotifications();
   const router = useRouter();
   const userId = user?._id;
 
   const [openModal, setOpenModal] = useState(false);
 
-  // Filter unread notifications for display
   const unreadNotifications = notifications.filter((n: { status: string; }) => n.status === "unread");
 
   return (
     <header className="px-4 my-4 w-full flex items-center justify-between bg-[#f9f9f9]">
-      {/* Render logo only when user is not logged in */}
       {!userId && (
         <div className="flex items-center md:hidden mr-3">
           <Image src="/logo.png" width={28} height={28} alt="logo" />
@@ -30,7 +28,7 @@ function Header() {
       )}
       <div className="flex flex-col md:flex-row items-start md:items-center">
         <h1 className="text-sm md:text-lg font-medium">
-          {userId ? `Welcome, ${user.name}!` : "Welcome to TaskManager"}
+          {userId ? `Welcome, ${user.name}!` : "Welcome to Task Manager"}
         </h1>
         <p className="text-xs md:text-sm md:ml-4">
           {userId ? (
@@ -42,7 +40,7 @@ function Header() {
               &nbsp;active tasks
             </>
           ) : (
-            "Please login or register to view your tasks"
+            "Please login to view your tasks"
           )}
         </p>
       </div>
@@ -76,7 +74,7 @@ function Header() {
             </div>
 
             <NotificationModal
-              notifications={unreadNotifications} // Pass only unread notifications to modal
+              notifications={unreadNotifications}
               openModal={openModal}
               markAsRead={markAsRead}
               markAllAsRead={markAllAsRead}
