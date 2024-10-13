@@ -12,7 +12,7 @@ function MainContentLayout({ children }: MainContentLayoutProps) {
   return (
     <main
       className={`pb-[1.5rem] flex h-full ${
-        userId ? "pr-4 md:pr-[20rem]" : "md:pr-4"
+        userId ? "pr-4 md:pr-[20rem]" : ""
       }`}
     >
       {children}
