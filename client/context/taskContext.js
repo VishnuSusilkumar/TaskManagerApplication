@@ -7,7 +7,7 @@ import { useNotifications } from "./notificationContext";
 
 const TasksContext = createContext();
 
-const serverUrl = "http://localhost:8000/api/v1";
+const serverUrl = "https://taskmanager-3kcf.onrender.com/api/v1";
 
 export const TasksProvider = ({ children }) => {
   const userId = useUserContext().user._id;

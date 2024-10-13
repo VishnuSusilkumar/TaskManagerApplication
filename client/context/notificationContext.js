@@ -6,7 +6,7 @@ import { useSocket } from "@/utils/socket";
 import toast from "react-hot-toast";
 
 const NotificationContext = createContext();
-const serverUrl = "http://localhost:8000/api/v1";
+const serverUrl = "https://taskmanager-3kcf.onrender.com/api/v1";
 
 export const NotificationProvider = ({ children }) => {
   const { user } = useUserContext();
