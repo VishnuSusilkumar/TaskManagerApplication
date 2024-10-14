@@ -31,13 +31,21 @@ SMTP_PORT = <your_smtp_port>
 SMTP_SERVICE = <your_smtp_service>
 SMTP_MAIL = <your_smtp_email>
 SMTP_PASSWORD = <your_smtp_password>
-
+```
 
 ### Installation
 1. Clone the repository:
-   ```bash
+```plaintext
    git clone https://github.com/VishnuSusilkumar/TaskManagerApplication.git
    cd backend
    cd client
+```
+2. Install dependencies:
+```plaintext
    npm install
-   npm start
+```
+3. Run the application
+```plaintext
+   npm start for backend
+   npm run dev for frontend
+```
