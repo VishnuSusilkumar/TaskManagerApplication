@@ -41,7 +41,7 @@ function TaskItem({ task }: TaskItemProps) {
           </p>
         </div>
 
-        <p className="text-xs sm:text-sm md:text-base text-gray-700 max-h-[9rem] overflow-y-auto">
+        <p className="text-xs sm:text-sm md:text-base text-gray-700 max-h-[7rem] overflow-y-auto">
           {task.description}
         </p>
       </div>
