@@ -27,7 +27,6 @@ export const NotificationProvider = ({ children }) => {
     try {
       const response = await axios.get(`${serverUrl}/notifications/${userId}`);
       setNotifications(response.data);
-      return response.data;
     } catch (error) {
       console.log("Error fetching notifications", error);
       toast.error("Failed to fetch notifications.");
@@ -145,6 +144,7 @@ export const NotificationProvider = ({ children }) => {
       toast.error("Failed to update all notification statuses.");
     });
 
+    await fetchNotifications(); 
   };
 
   return (
@@ -154,8 +154,7 @@ export const NotificationProvider = ({ children }) => {
         loading,
         markAsRead,
         markAllAsRead,
-        createNotification,
-        fetchNotifications
+        createNotification
       }}
     >
       {children}
