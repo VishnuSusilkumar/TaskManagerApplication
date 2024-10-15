@@ -46,7 +46,6 @@ export const NotificationProvider = ({ children }) => {
         task: newTask,
         status: "unread",
       };
-      setNotifications((prev) => [...prev, notification]);
       fetchNotifications();
     });
 
@@ -58,7 +57,6 @@ export const NotificationProvider = ({ children }) => {
         task: updatedTask,
         status: "unread",
       };
-      setNotifications((prev) => [...prev, notification]);
       fetchNotifications();
     });
 
@@ -69,7 +67,6 @@ export const NotificationProvider = ({ children }) => {
         message: `Task deleted: ${deletedTask.title}`,
         status: "unread",
       };
-      setNotifications((prev) => [...prev, notification]);
       fetchNotifications();
     });
 
