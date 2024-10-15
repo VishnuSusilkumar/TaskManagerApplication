@@ -22,6 +22,7 @@ function Header() {
     const getNotifications = async () => {
       const fetchedNotifications = await fetchNotifications();
       setResponse(fetchedNotifications);
+      
     };
     if (userId) {
       getNotifications();
