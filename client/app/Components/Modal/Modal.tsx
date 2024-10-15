@@ -32,7 +32,7 @@ function Modal() {
       .max(50, "Title cannot exceed 50 characters"),
     description: Yup.string()
       .required("Description is required")
-      .max(250, "Description cannot exceed 250 characters"),
+      .max(300, "Description cannot exceed 300 characters"),
     priority: Yup.string().required("Priority is required"),
     dueDate: Yup.date().required("Due Date is required").nullable(),
     completed: Yup.boolean().required("Task completion status is required"),
