@@ -91,6 +91,7 @@ export const NotificationProvider = ({ children }) => {
 
   const updateNotificationStatus = async (notificationId, status) => {
     try {
+      await fetchNotifications();
       await axios.patch(`${serverUrl}/update-notification/${notificationId}`, {
         status,
       });
