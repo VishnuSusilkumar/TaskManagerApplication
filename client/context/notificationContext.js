@@ -101,6 +101,7 @@ export const NotificationProvider = ({ children }) => {
   };
 
   const markAsRead = async (notificationId) => {
+    await fetchNotifications(); 
     const notificationToUpdate = notifications.find(
       (notification) => notification._id === notificationId
     );
@@ -128,6 +129,7 @@ export const NotificationProvider = ({ children }) => {
   
 
   const markAllAsRead = async () => {
+    await fetchNotifications(); 
     setNotifications([]);
 
     const updatePromises = notifications.map((notification) => {
@@ -144,7 +146,6 @@ export const NotificationProvider = ({ children }) => {
       toast.error("Failed to update all notification statuses.");
     });
 
-    await fetchNotifications(); 
   };
 
   return (
