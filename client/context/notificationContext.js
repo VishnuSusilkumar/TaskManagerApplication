@@ -27,6 +27,7 @@ export const NotificationProvider = ({ children }) => {
     try {
       const response = await axios.get(`${serverUrl}/notifications/${userId}`);
       setNotifications(response.data);
+      return response.data;
     } catch (error) {
       console.log("Error fetching notifications", error);
       toast.error("Failed to fetch notifications.");
