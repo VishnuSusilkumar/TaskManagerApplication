@@ -15,20 +15,12 @@ export const NotificationProvider = ({ children }) => {
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [fetchNeeded, setFetchNeeded] = useState(false);
 
   useEffect(() => {
     if (userId) {
       fetchNotifications();
     }
   }, [userId]);
-  
-  useEffect(() => {
-    if (fetchNeeded) {
-      fetchNotifications();
-      setFetchNeeded(false);
-    }
-  }, [fetchNeeded]);
 
   const fetchNotifications = async () => {
     setLoading(true);
@@ -55,7 +47,6 @@ export const NotificationProvider = ({ children }) => {
         status: "unread",
       };
       setNotifications((prev) => [...prev, notification]);
-      setFetchNeeded(true);
     });
 
     socket.on("taskUpdated", (updatedTask) => {
@@ -67,7 +58,6 @@ export const NotificationProvider = ({ children }) => {
         status: "unread",
       };
       setNotifications((prev) => [...prev, notification]);
-      setFetchNeeded(true);
     });
 
     socket.on("taskDeleted", (deletedTask) => {
@@ -78,7 +68,6 @@ export const NotificationProvider = ({ children }) => {
         status: "unread",
       };
       setNotifications((prev) => [...prev, notification]);
-      setFetchNeeded(true);
     });
 
     return () => {
