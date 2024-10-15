@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useUserContext } from "@/context/userContext";
 import { bell } from "@/utils/Icons";
 import { useRouter } from "next/navigation";
@@ -11,13 +11,26 @@ import Image from "next/image";
 function Header() {
   const { user } = useUserContext();
   const { openModalForAdd, activeTasks } = useTasks();
-  const { notifications, markAsRead, markAllAsRead } = useNotifications();
+  const { fetchNotifications, notifications, markAsRead, markAllAsRead } = useNotifications();
   const router = useRouter();
   const userId = user?._id;
 
   const [openModal, setOpenModal] = useState(false);
+  const [response, setResponse] = useState([]);
 
-  const unreadNotifications = notifications.filter((n: { status: string; }) => n.status === "unread");
+  useEffect(() => {
+    const getNotifications = async () => {
+      const fetchedNotifications = await fetchNotifications();
+      setResponse(fetchedNotifications); 
+      console.log("Fetched notifcaiotn", fetchNotifications);
+      
+    };
+    if (userId) {
+      getNotifications();
+    }
+  }, [userId, fetchNotifications]);
+  
+  const unreadNotifications = response.filter((n: { status: string; }) => n.status === "unread");
 
   return (
     <header className="px-4 my-4 w-full flex items-center justify-between bg-[#f9f9f9]">

@@ -102,8 +102,6 @@ export const NotificationProvider = ({ children }) => {
   };
 
   const markAsRead = async (notificationId) => {
-    const res = await fetchNotifications(); 
-    console.log("Fetch notification res in mark all", res);
     const notificationToUpdate = notifications.find(
       (notification) => notification._id === notificationId
     );
@@ -131,9 +129,6 @@ export const NotificationProvider = ({ children }) => {
   
 
   const markAllAsRead = async () => {
-    const res = await fetchNotifications(); 
-    console.log("Fetch notification res in mark all", res);
-    
     setNotifications([]);
 
     const updatePromises = notifications.map((notification) => {
@@ -159,7 +154,8 @@ export const NotificationProvider = ({ children }) => {
         loading,
         markAsRead,
         markAllAsRead,
-        createNotification
+        createNotification,
+        fetchNotifications
       }}
     >
       {children}
