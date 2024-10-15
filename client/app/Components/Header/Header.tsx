@@ -21,14 +21,12 @@ function Header() {
   useEffect(() => {
     const getNotifications = async () => {
       const fetchedNotifications = await fetchNotifications();
-      setResponse(fetchedNotifications); 
-      console.log("Fetched notifcaiotn", fetchNotifications);
-      
+      setResponse(fetchedNotifications);
     };
     if (userId) {
       getNotifications();
     }
-  }, [userId, fetchNotifications]);
+  }, [userId]);
   
   const unreadNotifications = response.filter((n: { status: string; }) => n.status === "unread");
 
