@@ -20,7 +20,7 @@ export const NotificationProvider = ({ children }) => {
     if (userId) {
       fetchNotifications();
     }
-  }, [userId]);
+  }, [userId, notifications]);
 
   const fetchNotifications = async () => {
     setLoading(true);
@@ -46,7 +46,7 @@ export const NotificationProvider = ({ children }) => {
         task: newTask,
         status: "unread",
       };
-      fetchNotifications();
+      setNotifications((prev) => [...prev, notification]);
     });
 
     socket.on("taskUpdated", (updatedTask) => {
@@ -57,7 +57,7 @@ export const NotificationProvider = ({ children }) => {
         task: updatedTask,
         status: "unread",
       };
-      fetchNotifications();
+      setNotifications((prev) => [...prev, notification]);
     });
 
     socket.on("taskDeleted", (deletedTask) => {
@@ -67,7 +67,7 @@ export const NotificationProvider = ({ children }) => {
         message: `Task deleted: ${deletedTask.title}`,
         status: "unread",
       };
-      fetchNotifications();
+      setNotifications((prev) => [...prev, notification]);
     });
 
     return () => {
