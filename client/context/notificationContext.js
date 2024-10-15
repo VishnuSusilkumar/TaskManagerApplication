@@ -47,6 +47,7 @@ export const NotificationProvider = ({ children }) => {
         status: "unread",
       };
       setNotifications((prev) => [...prev, notification]);
+      fetchNotifications();
     });
 
     socket.on("taskUpdated", (updatedTask) => {
@@ -58,6 +59,7 @@ export const NotificationProvider = ({ children }) => {
         status: "unread",
       };
       setNotifications((prev) => [...prev, notification]);
+      fetchNotifications();
     });
 
     socket.on("taskDeleted", (deletedTask) => {
@@ -68,6 +70,7 @@ export const NotificationProvider = ({ children }) => {
         status: "unread",
       };
       setNotifications((prev) => [...prev, notification]);
+      fetchNotifications();
     });
 
     return () => {
@@ -91,7 +94,6 @@ export const NotificationProvider = ({ children }) => {
 
   const updateNotificationStatus = async (notificationId, status) => {
     try {
-      await fetchNotifications();
       await axios.patch(`${serverUrl}/update-notification/${notificationId}`, {
         status,
       });
