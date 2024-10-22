@@ -9,6 +9,7 @@ import hashToken from "../../helpers/hashToken";
 import sendEmail from "../../helpers/sendEmail";
 import { Request, Response, NextFunction } from "express";
 import { CustomRequest } from "../../middleware/authMiddleware";
+import { StatusCode } from "../../helpers/enums";
 
 type RequestHandler = (
   req: Request,
@@ -21,14 +22,14 @@ export const registerUser: RequestHandler = async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      res.status(400).json({ message: "All fields are required" });
+      res.status(StatusCode.BadRequest).json({ message: "All fields are required" });
       return;
     }
 
     const passwordRegex =
       /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     if (!passwordRegex.test(password)) {
-      res.status(400).json({
+      res.status(StatusCode.BadRequest).json({
         message:
           "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.",
       });
@@ -37,7 +38,7 @@ export const registerUser: RequestHandler = async (req, res) => {
 
     const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     if (!emailRegex.test(email)) {
-      res.status(400).json({
+      res.status(StatusCode.BadRequest).json({
         message: "Invalid email format. Please use the format: user@domain.com",
       });
       return;
@@ -46,7 +47,7 @@ export const registerUser: RequestHandler = async (req, res) => {
     const userExists = await User.findOne({ email });
 
     if (userExists) {
-      res.status(400).json({ message: "User already exists" });
+      res.status(StatusCode.BadRequest).json({ message: "User already exists" });
       return;
     }
 
@@ -69,7 +70,7 @@ export const registerUser: RequestHandler = async (req, res) => {
     if (user) {
       const { _id, name, email, role, photo, bio, isVerified } = user;
 
-      res.status(201).json({
+      res.status(StatusCode.Created).json({
         _id,
         name,
         email,
@@ -80,11 +81,11 @@ export const registerUser: RequestHandler = async (req, res) => {
         token,
       });
     } else {
-      res.status(400).json({ message: "Invalid user data" });
+      res.status(StatusCode.BadRequest).json({ message: "Invalid user data" });
     }
   } catch (error) {
     console.error("Error during user registration:", error);
-    res.status(500).json({ message: "Server error, please try again later" });
+    res.status(StatusCode.InternalServerError).json({ message: "Server error, please try again later" });
   }
 };
 
@@ -92,14 +93,14 @@ export const loginUser: RequestHandler = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    res.status(400).json({ message: "All fields are required" });
+    res.status(StatusCode.BadRequest).json({ message: "All fields are required" });
     return;
   }
 
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   if (!passwordRegex.test(password)) {
-    res.status(400).json({
+    res.status(StatusCode.BadRequest).json({
       message:
         "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.",
     });
@@ -108,7 +109,7 @@ export const loginUser: RequestHandler = async (req, res) => {
 
   const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
   if (!emailRegex.test(email)) {
-    res.status(400).json({
+    res.status(StatusCode.BadRequest).json({
       message: "Invalid email format. Please use the format: user@domain.com",
     });
     return;
@@ -117,14 +118,14 @@ export const loginUser: RequestHandler = async (req, res) => {
   const userExists = await User.findOne({ email });
 
   if (!userExists) {
-    res.status(404).json({ message: "User not found, sign up!" });
+    res.status(StatusCode.NotFound).json({ message: "User not found, sign up!" });
     return;
   }
 
   const isMatch = await bcrypt.compare(password, userExists.password);
 
   if (!isMatch) {
-    res.status(400).json({ message: "Invalid credentials" });
+    res.status(StatusCode.BadRequest).json({ message: "Invalid credentials" });
     return;
   }
 
@@ -141,7 +142,7 @@ export const loginUser: RequestHandler = async (req, res) => {
       secure: true,
     });
 
-    res.status(200).json({
+    res.status(StatusCode.OK).json({
       _id,
       name,
       email,
@@ -152,7 +153,7 @@ export const loginUser: RequestHandler = async (req, res) => {
       token,
     });
   } else {
-    res.status(400).json({ message: "Invalid email or password" });
+    res.status(StatusCode.BadRequest).json({ message: "Invalid email or password" });
   }
 };
 
@@ -164,7 +165,7 @@ export const logoutUser: RequestHandler = async (req, res) => {
     path: "/",
   });
 
-  res.status(200).json({ message: "User logged out" });
+  res.status(StatusCode.OK).json({ message: "User logged out" });
 };
 
 export const getUser: RequestHandler = async (
@@ -174,9 +175,9 @@ export const getUser: RequestHandler = async (
   const user = await User.findById(req.user?._id).select("-password");
 
   if (user) {
-    res.status(200).json(user);
+    res.status(StatusCode.OK).json(user);
   } else {
-    res.status(404).json({ message: "User not found" });
+    res.status(StatusCode.NotFound).json({ message: "User not found" });
   }
 };
 
@@ -195,7 +196,7 @@ export const userLoginStatus: RequestHandler = async (
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
 
     if (decoded) {
-      res.status(200).json(true);
+      res.status(StatusCode.OK).json(true);
     } else {
       res.status(401).json(false);
     }
@@ -211,11 +212,11 @@ export const verifyEmail: RequestHandler = async (
   const user = await User.findById(req.user?._id);
 
   if (!user) {
-    res.status(404).json({ message: "User not found" });
+    res.status(StatusCode.NotFound).json({ message: "User not found" });
     return;
   }
   if (user.isVerified) {
-    res.status(400).json({ message: "User is already verified" });
+    res.status(StatusCode.BadRequest).json({ message: "User is already verified" });
     return;
   }
 
@@ -239,7 +240,7 @@ export const verifyEmail: RequestHandler = async (
   const verificationLink = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
 
   if (!process.env.USER_EMAIL) {
-    res.status(500).json({ message: "Sender email is not configured" });
+    res.status(StatusCode.InternalServerError).json({ message: "Sender email is not configured" });
     return;
   }
   const sendEmailOptions = {
@@ -261,7 +262,7 @@ export const verifyEmail: RequestHandler = async (
     return;
   } catch (error) {
     console.log("Error sending email: ", error);
-    res.status(500).json({ message: "Email could not be sent" });
+    res.status(StatusCode.InternalServerError).json({ message: "Email could not be sent" });
     return;
   }
 };
@@ -270,7 +271,7 @@ export const verifyUser: RequestHandler = async (req, res) => {
   const { verificationToken } = req.params;
 
   if (!verificationToken) {
-    res.status(400).json({ message: "Invalid verification token" });
+    res.status(StatusCode.BadRequest).json({ message: "Invalid verification token" });
     return;
   }
   const hashedToken = hashToken(verificationToken);
@@ -281,37 +282,37 @@ export const verifyUser: RequestHandler = async (req, res) => {
   });
 
   if (!userToken) {
-    res.status(400).json({ message: "Invalid or expired verification token" });
+    res.status(StatusCode.BadRequest).json({ message: "Invalid or expired verification token" });
     return;
   }
   const user = await User.findById(userToken.userId);
 
   if (!user) {
-    res.status(404).json({ message: "User not found" });
+    res.status(StatusCode.NotFound).json({ message: "User not found" });
     return;
   }
 
   if (user.isVerified) {
-    res.status(400).json({ message: "User is already verified" });
+    res.status(StatusCode.BadRequest).json({ message: "User is already verified" });
     return;
   }
 
   user.isVerified = true;
   await user.save();
-  res.status(200).json({ message: "User verified" });
+  res.status(StatusCode.OK).json({ message: "User verified" });
 };
 
 export const forgotPassword: RequestHandler = async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
-    res.status(400).json({ message: "Email is required" });
+    res.status(StatusCode.BadRequest).json({ message: "Email is required" });
     return;
   }
 
   const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
   if (!emailRegex.test(email)) {
-    res.status(400).json({
+    res.status(StatusCode.BadRequest).json({
       message: "Invalid email format. Please use the format: user@domain.com",
     });
     return;
@@ -320,7 +321,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    res.status(404).json({ message: "User not found" });
+    res.status(StatusCode.NotFound).json({ message: "User not found" });
     return;
   }
 
@@ -344,7 +345,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
   const resetLink = `${process.env.CLIENT_URL}/reset-password/${passwordResetToken}`;
 
   if (!process.env.USER_EMAIL) {
-    res.status(500).json({ message: "Sender email is not configured" });
+    res.status(StatusCode.InternalServerError).json({ message: "Sender email is not configured" });
     return;
   }
 
@@ -366,7 +367,7 @@ export const forgotPassword: RequestHandler = async (req, res) => {
     res.json({ message: "Email sent" });
   } catch (error) {
     console.log("Error sending email: ", error);
-    res.status(500).json({ message: "Email could not be sent" });
+    res.status(StatusCode.InternalServerError).json({ message: "Email could not be sent" });
     return;
   }
 };
@@ -376,14 +377,14 @@ export const resetPassword: RequestHandler = async (req, res) => {
   const { password } = req.body;
 
   if (!password) {
-    res.status(400).json({ message: "Password is required" });
+    res.status(StatusCode.BadRequest).json({ message: "Password is required" });
     return;
   }
 
   const passwordRegex =
     /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   if (!passwordRegex.test(password)) {
-    res.status(400).json({
+    res.status(StatusCode.BadRequest).json({
       message:
         "Password must be at least 8 characters long, contain at least one uppercase letter, one number, and one special character.",
     });
@@ -398,19 +399,19 @@ export const resetPassword: RequestHandler = async (req, res) => {
   });
 
   if (!userToken) {
-    res.status(400).json({ message: "Invalid or expired reset token" });
+    res.status(StatusCode.BadRequest).json({ message: "Invalid or expired reset token" });
     return;
   }
 
   const user = await User.findById(userToken.userId);
 
   if (!user) {
-    res.status(404).json({ message: "User not found" });
+    res.status(StatusCode.NotFound).json({ message: "User not found" });
     return;
   }
 
   user.password = password;
   await user.save();
 
-  res.status(200).json({ message: "Password reset successfully" });
+  res.status(StatusCode.OK).json({ message: "Password reset successfully" });
 };

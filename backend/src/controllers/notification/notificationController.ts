@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import NotificationModel from "../../models/notification/NotificationModel";
 import { CustomRequest } from "../../middleware/authMiddleware";
+import { StatusCode } from "../../helpers/enums";
 
 export const createNotification = async (
   req: CustomRequest,
@@ -17,10 +18,10 @@ export const createNotification = async (
 
     await notification.save();
 
-    res.status(201).json(notification);
+    res.status(StatusCode.Created).json(notification);
   } catch (error: any) {
     console.log("Error in createNotification: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
 
@@ -36,10 +37,10 @@ export const getNotifications = async (
       createdAt: -1,
     });
 
-    res.status(200).json(notifications);
+    res.status(StatusCode.OK).json(notifications);
   } catch (error: any) {
     console.log("Error in getNotifications: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
 
@@ -59,13 +60,13 @@ export const updateNotificationStatus = async (
     );
 
     if (!notification) {
-      res.status(404).json({ message: "Notification not found!" });
+      res.status(StatusCode.NotFound).json({ message: "Notification not found!" });
       return;
     }
 
-    res.status(200).json(notification);
+    res.status(StatusCode.OK).json(notification);
   } catch (error: any) {
     console.log("Error in updateNotificationStatus: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };

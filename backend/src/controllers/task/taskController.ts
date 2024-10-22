@@ -3,6 +3,7 @@ import { CustomRequest } from "../../middleware/authMiddleware";
 import TaskModel from "../../models/tasks/TaskModel";
 import { io } from "../../server";
 import mongoose from "mongoose";
+import { StatusCode } from "../../helpers/enums";
 
 export const createTask = async (
   req: CustomRequest,
@@ -18,12 +19,12 @@ export const createTask = async (
     }
 
     if (!title || title.trim() === "") {
-      res.status(400).json({ message: "Title is required!" });
+      res.status(StatusCode.BadRequest).json({ message: "Title is required!" });
       return;
     }
 
     if (!description || description.trim() === "") {
-      res.status(400).json({ message: "Description is required!" });
+      res.status(StatusCode.BadRequest).json({ message: "Description is required!" });
       return;
     }
 
@@ -34,7 +35,7 @@ export const createTask = async (
 
     if (existingTask) {
       res
-        .status(400)
+        .status(StatusCode.BadRequest)
         .json({ message: "A task with this title already exists!" });
       return;
     }
@@ -51,10 +52,10 @@ export const createTask = async (
     await task.save();
     io.emit("taskCreated", task);
 
-    res.status(201).json(task);
+    res.status(StatusCode.Created).json(task);
   } catch (error: any) {
     console.log("Error in createTask: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
 
@@ -67,18 +68,18 @@ export const getTasks = async (
     const userId = req.user?._id;
 
     if (!userId) {
-      res.status(400).json({ message: "User not found!" });
+      res.status(StatusCode.BadRequest).json({ message: "User not found!" });
     }
 
     const tasks = await TaskModel.find({ user: userId });
 
-    res.status(200).json({
+    res.status(StatusCode.OK).json({
       length: tasks.length,
       tasks,
     });
   } catch (error: any) {
     console.log("Error in getTasks: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
 
@@ -93,13 +94,13 @@ export const getTask = async (
     const { id } = req.params;
 
     if (!id) {
-      res.status(400).json({ message: "Please provide a task id" });
+      res.status(StatusCode.BadRequest).json({ message: "Please provide a task id" });
     }
 
     const task = await TaskModel.findById(id);
 
     if (!task) {
-      res.status(404).json({ message: "Task not found!" });
+      res.status(StatusCode.NotFound).json({ message: "Task not found!" });
       return;
     }
 
@@ -107,10 +108,10 @@ export const getTask = async (
       res.status(401).json({ message: "Not authorized!" });
     }
 
-    res.status(200).json(task);
+    res.status(StatusCode.OK).json(task);
   } catch (error: any) {
     console.log("Error in getTask: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
 
@@ -132,13 +133,13 @@ export const updateTask = async (
     }
 
     if (!id) {
-      res.status(400).json({ message: "Please provide a task id" });
+      res.status(StatusCode.BadRequest).json({ message: "Please provide a task id" });
     }
 
     const task = await TaskModel.findById(id);
 
     if (!task) {
-      res.status(404).json({ message: "Task not found!" });
+      res.status(StatusCode.NotFound).json({ message: "Task not found!" });
       return;
     }
 
@@ -155,7 +156,7 @@ export const updateTask = async (
 
     if (existingTask) {
       res
-        .status(400)
+        .status(StatusCode.BadRequest)
         .json({ message: "A task with this title already exists!" });
       return;
     }
@@ -170,11 +171,11 @@ export const updateTask = async (
     await task.save();
     io.emit("taskUpdated", task);
 
-    res.status(200).json(task);
+    res.status(StatusCode.OK).json(task);
     return;
   } catch (error: any) {
     console.log("Error in updateTask: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
 
@@ -195,7 +196,7 @@ export const deleteTask = async (
     const task = await TaskModel.findById(id);
 
     if (!task) {
-      res.status(404).json({ message: "Task not found!" });
+      res.status(StatusCode.NotFound).json({ message: "Task not found!" });
       return;
     }
 
@@ -206,11 +207,11 @@ export const deleteTask = async (
     await TaskModel.findByIdAndDelete(id);
     io.emit("taskDeleted", task);
 
-    res.status(200).json(task);
+    res.status(StatusCode.OK).json(task);
     return;
   } catch (error: any) {
     console.log("Error in deleteTask: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
 
@@ -223,7 +224,7 @@ export const getTaskStatus = async (
     const userId = req.user?._id;
 
     if (!userId) {
-      res.status(400).json({ message: "User not found!" });
+      res.status(StatusCode.BadRequest).json({ message: "User not found!" });
       return;
     }
 
@@ -283,7 +284,7 @@ export const getTaskStatus = async (
       avgCompletionTimeInHours.toFixed(2)
     );
 
-    res.status(200).json({
+    res.status(StatusCode.OK).json({
       completed: completedTasks,
       pending: pendingTasks,
       completionRate: completionRate.toFixed(2),
@@ -292,6 +293,6 @@ export const getTaskStatus = async (
     });
   } catch (error: any) {
     console.log("Error in getTaskStatus: ", error.message);
-    res.status(500).json({ message: error.message });
+    res.status(StatusCode.InternalServerError).json({ message: error.message });
   }
 };
